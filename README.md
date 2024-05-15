@@ -25,8 +25,8 @@ Setup, transpile & run the backend microservice:
 ```bash
 $ cd typescript
 $ npm i
-$ node_modules\.bin\tsc -w
-$ node .\dist\app.js
+$ node_modules/.bin/tsc -w
+$ node ./dist/app.js
 ```
 Load http://localhost:8088/jobs in your browser.
 
