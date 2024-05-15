@@ -1,0 +1,9 @@
+_exclude/*
+node_modules/*
+package-lock.json
+package.json.*
+README.md.*
+*.ts.*
+jest.*
+tsconfig.json
+tsconfig.json.*

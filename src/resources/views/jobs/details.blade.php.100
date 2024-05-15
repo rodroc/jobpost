@@ -1,0 +1,271 @@
+@extends('layouts.master')
+
+@section('title')
+Post New Job
+@endsection
+
+@section('page-styles')
+<link href="/plugins/bootstrap3-dialog/bootstrap-dialog.min.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+  .bootstrap-dialog .modal-header.bootstrap-dialog-draggable {
+    cursor: move;
+  }
+</style>
+@endsection
+
+@section('content-header')
+<h1>
+  <small class=""></small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="/jobs"><i class="fa fa-dashboard"></i> Jobs</a></li>
+  <li class="active">Post Job</li>
+</ol>
+@endsection
+
+@section('content')
+
+<div class="row">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="box box-danger">
+      <div class="box-header with-border">
+        <h3 class="box-title">Cars / Vehicles</h3>
+        <div class="box-tools pull-right">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="box-body">
+
+        <a href="javascript:void(0);" class="btn btn-default add-platenumber"><i class="fa fa-plus"></i>&nbsp;Post Job</a>
+
+
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <!-- general form elements -->
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Contact Details</h3>
+        <div class="box-tools pull-right">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          </button>
+        </div>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form role="form" action="/jobs/create" method="POST">
+        <input type="hidden" name="_method" value="PUT">
+        @csrf
+        <input type="hidden" name="_id" value="{{ null }}">
+        <div class="box-body">
+          <div class="form-group">
+            <label for="jobtitle">Job Title</label>
+            <input type="text" class="form-control" name="jobtitle" placeholder="Enter the primary phone" value="{{ $job?$job->title:null }}" maxlength="13">
+          </div>
+          <div class="form-group">
+            <label for="emptype">Emploment Type</label>
+            <input type="text" class="form-control" name="emptype" placeholder="Enter the secondary phone" value="{{ $job?$job->emptype:null }}" maxlength="13">
+          </div>
+
+
+          <div class="form-group">
+            <label for="email">Email of Moderator</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter the email address if tg" value="{{ $job->moderatoremail }}">
+          </div>
+
+
+
+        </div>
+
+        <!-- /.box-body -->
+
+        <div class="box-footer">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.box -->
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <!-- Form Element sizes -->
+    <div class="box box-success">
+      <div class="box-header with-border">
+        <h3 class="box-title">Other Details</h3>
+        <div class="box-tools pull-right">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="box-body">
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" class="form-control" name="location" placeholder="" value="{{ $job->location }}" style="border:none;">
+        </div>
+
+
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
+</div>
+
+@endsection
+
+@section('page-scripts')
+<script src="/plugins/bootstrap3-dialog/bootstrap-dialog.min.js"></script>
+<script>
+  $('a.removeplatenumber').on('click', function(evt) {
+    var $el = $(this);
+    var plateNumber = $el.attr('platenumber');
+    var input = {
+      'customerid': "{{$job->_id}}",
+      'platenumber': plateNumber
+    };
+    $.ajax({
+      url: '/job/removeplatenumber',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      data: JSON.stringify(input),
+      cache: false,
+      type: 'POST',
+      dataType: 'json',
+      beforeSend: function() {
+        console.log(`removing platenumber ${plateNumber}`);
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+      },
+      success: function(result) {
+        console.log(result);
+        if (result.success) {
+          toastr.success('Plate number removed')
+          $el.closest('tr').remove();
+        } else {
+          toastr.error('Failed to remove plate number');
+        }
+      } //ajaxSuccess
+    });
+
+  });
+
+  var submitPlateNumber = function(fnCallback) {
+    var platenumber = $('#platenumber').val();
+    //var nPlatenumber=encodeURIComponent(platenumber);
+
+    $.ajax({
+      url: `/customers/addplatenumber`,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      data: JSON.stringify({
+        'customerid': "{{ $job->_id }}",
+        'platenumber': platenumber
+      }),
+      cache: false,
+      type: 'POST',
+      dataType: 'json',
+      beforeSend: function() {
+        console.log('submitting platenumber...');
+        $('#platenumber-status').html('<center><i class="fa fa-spinner fa-3x fa-spin"></center></i>');
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+        toastr.error('Error occured: ');
+      },
+      success: function(result) {
+        //console.log(result);
+        return fnCallback(result);
+      } //ajaxSuccess
+    }).always(function() {
+      $('#platenumber-status').empty();
+    });
+
+  };
+
+
+
+
+  $('.add-platenumber').on('click', function(evt) {
+
+    var dialog = BootstrapDialog.show({
+      title: 'Add Plate Number',
+      size: BootstrapDialog.SIZE_NORMAL,
+      type: BootstrapDialog.TYPE_DANGER,
+      closable: true,
+      closeByBackdrop: false,
+      closeByKeyboard: true,
+      draggable: false,
+      message: `
+      <form id="frmAddVehicle" method="POST" action="/customers/addplatenumber" >
+          @csrf             
+        <input type="hidden" name="customerid" value="{{ $job->_id }}" >
+        <input type="text" id="platenumber" name="platenumber" maxlength="10" style="margin:0;padding:0;" class="form-control" placeholder="Enter plate number and hit ENTER">
+      </form>
+      <div id="platenumber-status"></div>
+      `,
+      onshown: function(dialog) {
+        console.log('shown!');
+        $('#platenumber').on('keypress', function(evt) {
+          if (evt.which == 13) {
+            //alert('You pressed enter!');
+            evt.preventDefault();
+            submitPlateNumber(function(data) {
+              console.log('returned data after key13:');
+              console.log(data);
+              if (data.success) {
+                //toastr.success('Plate number added to this customer');
+                window.location = '/customers/edit/{{$job->_id}}';
+              } else {
+                toastr.error(data.errors[0]);
+              }
+
+            });
+            return false;
+          }
+        })
+      },
+      buttons: [{
+        label: 'Add',
+        action: function(dialog) {
+          //dialog.setTitle('Title 1');
+          //$('#frmAddVehicle').submit();
+          submitPlateNumber(function(data) {
+            console.log('returned data after btn click:');
+            console.log(data);
+            if (data.success) {
+              //toastr.success('Plate number added to this customer');
+              window.location = '/customers/edit/{{$job->_id}}';
+
+            } else {
+              toastr.error(data.errors[0]);
+            }
+          });
+        } //dialog action
+        // hotkey: 13// Enter.
+      }, {
+        label: 'Close',
+        action: function(dialog) {
+          //dialog.setTitle('Title 2');
+          dialog.close();
+        }
+      }]
+    });
+  });
+</script>
+
+@endsection
