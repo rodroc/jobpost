@@ -30,4 +30,4 @@ $ node .\dist\app.js
 ```
 Load http://localhost:8088/jobs in your browser.
 
-The adminer to query the data is located here: http://localhost:8088/adminer.php .
+To access the sqlite/data, load http://localhost:8088/adminer.php .
