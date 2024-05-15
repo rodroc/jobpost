@@ -30,4 +30,5 @@ $ node .\dist\app.js
 ```
 Load http://localhost:8088/jobs in your browser.
 
-To access the sqlite/data, load http://localhost:8088/adminer.php .
+To access the sqlite/data, load http://localhost:8088/adminer.php.
+The database file is located in ..\database\database.sqlite
