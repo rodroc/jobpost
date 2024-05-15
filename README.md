@@ -21,10 +21,13 @@ Open docker/terminal under php.
 ```
 Rename .env-example to .env and update the MAIL_*** settings w/ your own credentials.
 
-Run the backend microservice:
+Setup, transpile & run the backend microservice:
 ```bash
 $ cd typescript
+$ npm i
+$ node_modules\.bin\tsc -w
 $ node .\dist\app.js
 ```
 Load http://localhost:8088/jobs in your browser.
+
 The adminer to query the data is located here: http://localhost:8088/adminer.php .
