@@ -19,10 +19,10 @@ Open docker/terminal under php.
   $ php composer.phar install
   $ chmod 777 /var/www/html/database/database.sqlite
 ```
-Copy .env-example as .env
+Rename .env-example to .env
 Update the MAIL_*** settings w/ your own credentials.
 
-Run backend microservice:
+Run the backend microservice:
 ```bash
 $ cd typescript
 $ node .\dist\app.js
